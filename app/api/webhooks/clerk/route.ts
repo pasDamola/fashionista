@@ -73,13 +73,26 @@ export async function POST(req: Request) {
     const newUser = await createUser(user);
 
     // Set public metadata
+    // if (newUser) {
+    //   await clerkClient.users.updateUserMetadata(id, {
+    //     publicMetadata: {
+    //       userId: newUser._id,
+    //     },
+    //   });
+    // }
+
     if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        },
-      });
-    }
+        try {
+          await clerkClient.users.updateUserMetadata(id, {
+            publicMetadata: {
+              userId: newUser._id,
+            },
+          });
+        } catch (error) {
+          console.error("Error updating user metadata:", error);
+          return new Response("Error updating metadata", { status: 500 });
+        }
+      }
 
     return NextResponse.json({ message: "OK", user: newUser });
   }
